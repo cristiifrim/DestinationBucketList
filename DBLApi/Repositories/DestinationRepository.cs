@@ -12,5 +12,10 @@ namespace DBLApi.Repositories
         {
             _context = context;
         }
+
+        public async Task<bool> DestinationExists(string title)
+        {
+            return await _context.FindAsync<Destination>(title) != null;
+        }
     }
 }
