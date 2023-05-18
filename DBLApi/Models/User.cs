@@ -7,6 +7,7 @@ namespace DBLApi.Models
         public string Password { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string Role { get; set; } = Roles.User;
-        public int Salt { get; set; }
+        public string Salt { get; set; } = default!;
+        public DateTime Birthday { get; set; }
     }
 }

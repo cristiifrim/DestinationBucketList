@@ -2,7 +2,7 @@ using DBLApi.Models;
 
 namespace DBLApi.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
         Task<bool> IsEmailTaken(string email);
         Task<bool> IsUsernameTaken(string username);
