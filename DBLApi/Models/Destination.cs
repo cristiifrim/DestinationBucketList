@@ -7,7 +7,7 @@ namespace DBLApi.Models
         protected string Title { get; set; } = default!;
         protected string Image { get; set; } = default!;
         protected string Description { get; set; } = default!;
-        protected DateOnly StartDate { get; set; }
-        protected DateOnly EndDate { get; set; } 
+        protected DateTime StartDate { get; set; }
+        protected DateTime EndDate { get; set; } 
     }
 }
