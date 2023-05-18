@@ -25,7 +25,14 @@ namespace DBLApi.Controllers;
         [HttpGet("{id}")]
         public async Task<ActionResult<Destination>> GetDestination(int id)
         {
-            return Ok(await _destinationRepository.GetById(id));
+            var destination = await _destinationRepository.GetById(id);
+
+            if(destination == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(destination);
         }
 
         [HttpPost]
