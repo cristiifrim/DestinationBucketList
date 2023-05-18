@@ -66,6 +66,7 @@ namespace DBLApi.Controllers;
         public async Task<ActionResult<Destination>> PutDestination([FromRoute] int id,[FromBody] DestinationDTO destinationDTO)
         {
             var destination = await _destinationRepository.GetById(id);
+            
             if(destination == null)
             {
                 return NotFound();
@@ -85,9 +86,12 @@ namespace DBLApi.Controllers;
         public async Task<ActionResult<Destination>> DeleteDestination(int id)
         {
             var destination = await _destinationRepository.GetById(id);
-            if(destination == null){
+
+            if(destination == null)
+            {
                 return NotFound();
             }
+
             await _destinationRepository.Delete(destination);
             return Ok(destination);
         }
