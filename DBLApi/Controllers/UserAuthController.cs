@@ -79,7 +79,8 @@ namespace DBLApi.Controllers
             });
         }
 
-        [HttpPost("delete"), Authorize]
+        [HttpPost("delete")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete([FromBody] Authentication loginRequest)
         {
             var user = await _userRepository.GetUserByUsername(loginRequest.Username);

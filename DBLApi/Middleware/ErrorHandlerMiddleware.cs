@@ -37,6 +37,7 @@ public class ErrorHandlerMiddleware : IMiddleware
                 case InvalidPasswordException ex:
                     error = ex.GetDetails();
                     break;
+
                 default:
                     error = new ProblemDetails();
                     error.Status = (int)HttpStatusCode.InternalServerError;

@@ -1,26 +1,42 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using DBLApi.Models;
 
 namespace DBLApi.DTOs
 {
-    public class DestinationDTO
+    public class DestinationDto
     {
+        [Required]
         public string Geolocation { get; set; } = default!;
+        [Required]
         public string Title { get; set; } = default!;
+        [Required]
         public string Image { get; set; } = default!;
-        public string Description { get; set; } = default!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; } 
+        [Required]
+        public string Description { get; set; } = default!; 
 
-        public DestinationDTO DestinationToDTO(Destination destination)
+        public DateTime StartDate { get; set; } = DateTime.MinValue;
+        public DateTime EndDate { get; set; } = DateTime.MinValue;
+
+        [JsonConstructor]
+        public DestinationDto(){}
+
+        public DestinationDto(Destination destination)
         {
-            return new DestinationDTO
+            Geolocation = destination.Geolocation;
+            Title = destination.Title;
+            Image = destination.Image;
+            Description = destination.Description;
+        }
+
+        public static Destination ToDestination(DestinationDto destinationDTO)
+        {
+            return new Destination
             {
-                Geolocation = destination.Geolocation,
-                Title = destination.Title,
-                Image = destination.Image,
-                Description = destination.Description,
-                StartDate = destination.StartDate,
-                EndDate = destination.EndDate
+                Geolocation = destinationDTO.Geolocation,
+                Title = destinationDTO.Title,
+                Image = destinationDTO.Image,
+                Description = destinationDTO.Description,
             };
         }
     }
