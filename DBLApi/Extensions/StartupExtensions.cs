@@ -4,6 +4,7 @@ using DBLApi.Middleware;
 using DBLApi.Repositories;
 using DBLApi.Repositories.Interfaces;
 using DBLApi.Services;
+using DBLApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,7 @@ namespace DBLApi.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddSingleton<JwtTokenService>();
+            services.AddSingleton<IPasswordService, BCryptPasswordService>();
             return services;
         }
 

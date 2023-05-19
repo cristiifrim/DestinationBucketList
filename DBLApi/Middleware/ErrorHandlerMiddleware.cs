@@ -28,7 +28,15 @@ public class ErrorHandlerMiddleware : IMiddleware
                 //     break;
                 // Add here any custom exceptions you want to handle.
 
-
+                case UserAlreadyExistsException ex:
+                    error = ex.GetDetails();
+                    break;
+                case UserNotFoundException ex:
+                    error = ex.GetDetails();
+                    break;
+                case InvalidPasswordException ex:
+                    error = ex.GetDetails();
+                    break;
                 default:
                     error = new ProblemDetails();
                     error.Status = (int)HttpStatusCode.InternalServerError;
