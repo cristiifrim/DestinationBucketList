@@ -12,7 +12,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddRepositories();
+builder.Services.AddServices();
 builder.Services.AddMiddlewareServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCors();
 
 
@@ -35,7 +37,9 @@ app.UseCors(builder =>
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
