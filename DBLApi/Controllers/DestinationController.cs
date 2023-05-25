@@ -2,11 +2,9 @@ using DBLApi.Models;
 using DBLApi.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using DBLApi.DTOs;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using DBLApi.Services;
-using System.Security.Claims;
 using DBLApi.Errors;
 
 namespace DBLApi.Controllers;
@@ -97,9 +95,9 @@ namespace DBLApi.Controllers;
             if(role == Roles.User)
             {
                 var userId = Int32.Parse(_jwtTokenService.GetUserIdFromToken(token!));
-                var userDestination = _destinationRepository.GetDestinationByTitle(destination.Title);
+                var userDestination = await _destinationRepository.GetDestinationByTitle(destination.Title);
 
-                await _destinationRepository.AddUserDestination(userId, userDestination.Id, destinationDTO.StartDate, destinationDTO.EndDate);
+                await _destinationRepository.AddUserDestination(userId, userDestination!.Id, destinationDTO.StartDate, destinationDTO.EndDate);
             }
 
             return Ok(new { Message = "Destination added successfully" });
@@ -117,8 +115,15 @@ namespace DBLApi.Controllers;
             }
 
             var token = await HttpContext.GetTokenAsync("access_token");
-
             var role = _jwtTokenService.GetUserRoleFromToken(token!);
+
+            if(role == Roles.User)
+            {
+                if(destinationDTO.StartDate == DateTime.MinValue || destinationDTO.EndDate == DateTime.MinValue)
+                {
+                    throw new InvalidDateException();
+                }
+            }
 
             destination = DestinationDto.ToDestination(destinationDTO);
 
@@ -142,7 +147,4 @@ namespace DBLApi.Controllers;
 
             return Ok();
         }
-
-        
-        
     }
