@@ -31,12 +31,27 @@ public class ErrorHandlerMiddleware : IMiddleware
                 case UserAlreadyExistsException ex:
                     error = ex.GetDetails();
                     break;
+                    
                 case UserNotFoundException ex:
                     error = ex.GetDetails();
                     break;
+
                 case InvalidPasswordException ex:
                     error = ex.GetDetails();
                     break;
+
+                case DestinationNotFoundException ex:
+                    error = ex.GetDetails();
+                    break;
+                
+                case DestinationAlreadyExistsException ex:
+                    error = ex.GetDetails();
+                    break;
+                
+                case InvalidDateException ex:
+                    error = ex.GetDetails();
+                    break;
+
                 default:
                     error = new ProblemDetails();
                     error.Status = (int)HttpStatusCode.InternalServerError;

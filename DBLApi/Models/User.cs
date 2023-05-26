@@ -9,5 +9,7 @@ namespace DBLApi.Models
         public string Role { get; set; } = Roles.User;
         public string Salt { get; set; } = default!;
         public DateTime Birthday { get; set; }
+
+        public ICollection<StayDates> StayDates { get; set; } = default!;
     }
 }
