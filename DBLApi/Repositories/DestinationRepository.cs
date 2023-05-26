@@ -25,6 +25,23 @@ namespace DBLApi.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> UpdateUserDestination(int userId, int destinationId, DateTime startDate, DateTime endDate)
+        {
+            var stayDates = await _context.StayDates.FirstOrDefaultAsync(sd => sd.UserId == userId && sd.DestinationId == destinationId);
+
+            if (stayDates == null)
+            {
+                return false;
+            }
+            
+            stayDates.StartDate = startDate;
+            stayDates.EndDate = endDate;
+
+            _context.StayDates.Update(stayDates);
+            
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> DestinationExists(string title)
         {
             return await _context.Destinations.AnyAsync(d => d.Title == title && d.IsPublic);
@@ -59,6 +76,25 @@ namespace DBLApi.Repositories
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public async Task<bool> DeleteUserDestination(int userId, int destinationId)
+        {
+            var stayDates = await _context.StayDates.FirstOrDefaultAsync(sd => sd.UserId == userId && sd.DestinationId == destinationId);
+
+            if (stayDates == null)
+            {
+                return false;
+            }
+
+            _context.StayDates.Remove(stayDates);
+            return await _context.SaveChangesAsync() > 0;
+            
+        }
+
+        public async Task<StayDates?> GetUserDestination(int userId, int destinationId)
+        {
+            return await _context.StayDates.FirstOrDefaultAsync(sd => sd.UserId == userId && sd.DestinationId == destinationId);
         }
     }
 }

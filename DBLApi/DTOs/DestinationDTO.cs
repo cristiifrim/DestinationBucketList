@@ -39,5 +39,25 @@ namespace DBLApi.DTOs
                 Description = destinationDTO.Description,
             };
         }
+
+        public static DestinationDto ToDestinationDto(Destination destination)
+        {
+            return new DestinationDto
+            {
+                Geolocation = destination.Geolocation,
+                Title = destination.Title,
+                Image = destination.Image,
+                Description = destination.Description,
+            };
+        }
+
+        public static StayDates ToStayDates(DestinationDto destinationDTO)
+        {
+            return new StayDates
+            {
+                StartDate = destinationDTO.StartDate,
+                EndDate = destinationDTO.EndDate
+            };
+        }
     }
 }

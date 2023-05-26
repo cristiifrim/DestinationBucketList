@@ -24,6 +24,7 @@ namespace DBLApi.Controllers;
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<ActionResult<IEnumerable<Destination>>> GetDestinations([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             return Ok(await _destinationRepository.GetAll(page, pageSize));
@@ -40,6 +41,18 @@ namespace DBLApi.Controllers;
                 return NotFound();
             }
 
+            if(!destination.IsPublic)
+            {
+                var token = await HttpContext.GetTokenAsync("access_token");
+                var user = Int32.Parse(_jwtTokenService.GetUserIdFromToken(token!));
+                var stayDates = await _destinationRepository.GetUserDestination(user, id);
+
+                if(stayDates == null)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+            }
+
             return Ok(destination);
         }
 
@@ -52,8 +65,15 @@ namespace DBLApi.Controllers;
 
         [HttpGet("user/{userId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Destination>>> GetUserDestinations(int userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<Destination>>> GetUserDestinations([FromRoute] int userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
+            var token = await HttpContext.GetTokenAsync("access_token");
+
+            if(userId != Int32.Parse(_jwtTokenService.GetUserIdFromToken(token!)))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             return Ok(await _destinationRepository.GetUserDestinations(userId, page, pageSize));
         }
 
@@ -105,7 +125,7 @@ namespace DBLApi.Controllers;
         
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Destination>> PutDestination([FromRoute] int id,[FromBody] DestinationDto destinationDTO)
+        public async Task<ActionResult<Destination>> PutDestination([FromRoute] int id, [FromBody] DestinationDto destinationDTO)
         {
             var destination = await _destinationRepository.GetById(id);
             
@@ -119,10 +139,18 @@ namespace DBLApi.Controllers;
 
             if(role == Roles.User)
             {
+                if(destination.IsPublic)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+
                 if(destinationDTO.StartDate == DateTime.MinValue || destinationDTO.EndDate == DateTime.MinValue)
                 {
                     throw new InvalidDateException();
                 }
+
+                var userId = Int32.Parse(_jwtTokenService.GetUserIdFromToken(token!));
+                await _destinationRepository.UpdateUserDestination(userId, destination.Id, destinationDTO.StartDate, destinationDTO.EndDate);
             }
 
             destination = DestinationDto.ToDestination(destinationDTO);
@@ -141,6 +169,27 @@ namespace DBLApi.Controllers;
             if(destination == null)
             {
                 return NotFound();
+            }
+
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var role = _jwtTokenService.GetUserRoleFromToken(token!);
+            var userId = Int32.Parse(_jwtTokenService.GetUserIdFromToken(token!));
+
+            if(role == Roles.User)
+            {
+                if(destination.IsPublic)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+
+                await _destinationRepository.DeleteUserDestination(userId, destination.Id);
+
+                if(!destination.IsPublic) 
+                {
+                    await _destinationRepository.Delete(destination);
+                }
+
+                return Ok();
             }
 
             await _destinationRepository.Delete(destination);
