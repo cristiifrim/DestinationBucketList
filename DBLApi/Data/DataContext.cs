@@ -5,14 +5,18 @@ namespace DBLApi.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { 
+        public DataContext() {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        }
+            public DataContext(DbContextOptions<DataContext> options) : base(options) { 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         }
 
-        public DbSet<User> Users { get; set; } = default!;
-        public DbSet<Destination> Destinations { get; set; } = default!;
-        public DbSet<StayDates> StayDates { get; set; } = default!;
+        public virtual DbSet<User> Users { get; set; } = default!;
+        public virtual DbSet<Destination> Destinations { get; set; } = default!;
+        public virtual DbSet<StayDates> StayDates { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
